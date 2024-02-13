@@ -11,5 +11,6 @@ Chord is a protocol and algorithm for a peer-to-peer distributed hash table. It 
 
 ## References
 
-Wikipedia on Distributed Hash Tables: [Distributed hash table - Wikipedia](https://en.wikipedia.org/wiki/Distributed_hash_table)
 Original Paper on Chord Protocol: [Chord: A Scalable Peer-to-peer Lookup Service for Internet Applications (PDF)](https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf)
+
+Wikipedia on Distributed Hash Tables: [Distributed hash table - Wikipedia](https://en.wikipedia.org/wiki/Distributed_hash_table)
