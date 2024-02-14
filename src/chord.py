@@ -35,6 +35,7 @@ class ChordRing:
         self.nodes = []
         self.extents = {i: None for i in range(num_extents)}
         self.replicas = n
+        self.num_extents = num_extents
 
         # Automatically add initial nodes
         for _ in range(initial_nodes):
@@ -145,8 +146,8 @@ class ChordRing:
 
 
     def simulate_workload(self, num_operations):
-        for i in range(1, num_operations+1):  # Assuming 10,000 extents
-            extent_name = f"extent{i % 10000}"
+        for i in range(1, num_operations+1):  
+            extent_name = f"extent{i % self.num_extents}"
             data = f"data{i}"
             self.store_data(extent_name, data)
 

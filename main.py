@@ -3,12 +3,12 @@ from src.chord import ChordRing
 
 # Parameters
 nodes = 10
-num_extents = 10
-workload_size = 100
+num_extents = 10000
+workload_size = 1000000
 num_servers_max = 20
 servers_increment = 5
 m=10
-n=4
+n=3
 
 
 # Initialize Chord Ring with 10 servers and 10,000 extents
