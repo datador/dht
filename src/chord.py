@@ -29,11 +29,12 @@ class Node:
         return self.counter
 
 class ChordRing:
-    def __init__(self, m, num_extents, initial_nodes):
+    def __init__(self, m, num_extents, initial_nodes, n):
         self.m = m
         self.max_nodes = 2 ** m
         self.nodes = []
         self.extents = {i: None for i in range(num_extents)}
+        self.replicas = n
 
         # Automatically add initial nodes
         for _ in range(initial_nodes):
@@ -119,11 +120,22 @@ class ChordRing:
         successor = self.find_successor(removed_node.node_id + 1)
         for key, value in removed_node.data.items():
             successor.store_data(key, value)
-
+  
     def store_data(self, key, value):
         key_hash = self.hash_key(key)
-        node = self.find_successor(key_hash)
-        node.store_data(key, value)
+        initial_node = self.find_successor(key_hash)
+        initial_node.store_data(key, value)
+
+        # Replicate the data on the next 'self.replicas' successor nodes (n=1 means replication factor of 1, so stored on 2 nodes total)
+        current_node = initial_node
+        for _ in range(self.replicas):
+            # Find the immediate successor of the current node from the fingertables (always index 0 for next in line)
+            next_node_id = current_node.finger_table[0].node_id
+            next_node = self.find_successor(next_node_id)
+            next_node.store_data(key, value)
+
+            # update next node for next round of iter
+            current_node = next_node
 
     def lookup_data(self, key):
         key_hash = self.hash_key(key)

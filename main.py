@@ -3,16 +3,17 @@ from src.chord import ChordRing
 
 # Parameters
 nodes = 10
-num_extents = 10000
-workload_size = 1000000
-num_servers_max = 30
+num_extents = 10
+workload_size = 100
+num_servers_max = 20
 servers_increment = 5
 m=10
+n=4
 
 
 # Initialize Chord Ring with 10 servers and 10,000 extents
 
-chord_ring = ChordRing(m=m, num_extents=num_extents, initial_nodes=nodes)
+chord_ring = ChordRing(m=m, num_extents=num_extents, initial_nodes=nodes,n=n)
 chord_ring.simulate_workload(workload_size)
 distribution_after_scaling = chord_ring.analyze_workload_distribution()
 print(f"Workload Distribution after scaling to {nodes} nodes:", distribution_after_scaling)
