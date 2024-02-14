@@ -14,7 +14,7 @@ n=3
 # Initialize Chord Ring with 10 servers and 10,000 extents
 
 chord_ring = ChordRing(m=m, num_extents=num_extents, initial_nodes=nodes,n=n)
-chord_ring.simulate_workload(workload_size)
+chord_ring.simulate_random_workload(workload_size)
 distribution_after_scaling = chord_ring.analyze_workload_distribution()
 print(f"Workload Distribution after scaling to {nodes} nodes:", distribution_after_scaling)
 
@@ -22,7 +22,7 @@ print(f"Workload Distribution after scaling to {nodes} nodes:", distribution_aft
 for total_nodes in range(15, num_servers_max+1, servers_increment):  # Incrementing by 5 each time up to 30 nodes
     for _ in range(servers_increment):  # Add 5 new nodes
         chord_ring.add_random_node()
-    chord_ring.simulate_workload(workload_size)
+    chord_ring.simulate_random_workload(workload_size)
     distribution_after_scaling = chord_ring.analyze_workload_distribution()
     print(f"Workload Distribution after scaling to {total_nodes} nodes:", distribution_after_scaling)
 

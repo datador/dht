@@ -151,5 +151,11 @@ class ChordRing:
             data = f"data{i}"
             self.store_data(extent_name, data)
 
+    def simulate_random_workload(self, num_operations):
+        for i in range(1, num_operations+1):  
+            extent_name = f"extent{random.randint(0, self.num_extents)}"
+            data = f"data{i}"
+            self.store_data(extent_name, data)
+
     def analyze_workload_distribution(self):
         return {i+1: node.get_counter() for i,node in enumerate(self.nodes)}
