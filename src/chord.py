@@ -10,9 +10,11 @@ class Node:
         self.finger_table = []
         self.predecessor = None
         self.m = m
+        self.counter = 0
 
     def store_data(self, key, value):
         self.data[key] = value
+        self.counter += 1
 
     def find_successor(self, key_hash):
         if self.node_id < key_hash <= self.finger_table[0].node_id or self.node_id == self.finger_table[0].node_id:
@@ -23,6 +25,8 @@ class Node:
                 if node.node_id < key_hash:
                     return node.find_successor(key_hash)
             return self
+    def get_counter(self):
+        return self.counter
 
 class ChordRing:
     def __init__(self, m, num_extents, initial_nodes):
@@ -130,9 +134,9 @@ class ChordRing:
 
     def simulate_workload(self, num_operations):
         for i in range(1, num_operations+1):  # Assuming 10,000 extents
-            extent_name = f"extent{i}"
+            extent_name = f"extent{i % 10000}"
             data = f"data{i}"
             self.store_data(extent_name, data)
 
     def analyze_workload_distribution(self):
-        return {node.node_id: len(node.data) for node in self.nodes}
+        return {i+1: node.get_counter() for i,node in enumerate(self.nodes)}
