@@ -56,11 +56,13 @@ def chi_squared_test(values: list):
     """
     observed = list(values)
     expected = ideal_distribution(values)
-    
-    return stats.chisquare(observed, expected).pvalue
+
+    _, p_value = stats.chisquare(observed, expected)
+
+    return p_value
 
 # Parameters
-m = 10  # size of the key space
+m = 8  # size of the key space
 num_extents = 10000
 workload = 1000000
 replication_factor = 3
@@ -85,18 +87,22 @@ print("Write Distribution:", write_distribution)
 print("Sum of write distribution", sum(write_distribution.values()))
 
 # Add more nodes and check distribution
-additional_nodes = 5
-number_of_nodes = initial_nodes + additional_nodes
-for i in range(initial_nodes, number_of_nodes):
-    chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
+nodes_per_increment = 5
+max_number_of_nodes = 30 # maximum number of nodes
+current_number_of_nodes = initial_nodes
 
-updated_distribution = chord_ring.get_load_distribution()
+for _ in range(int((max_number_of_nodes - initial_nodes) / nodes_per_increment)):
+    current_number_of_nodes = current_number_of_nodes + nodes_per_increment
+    for _ in range(nodes_per_increment):
+        chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
 
-# Print updated distribution statistics
-print_distribution_statistics('Updated Distribution', updated_distribution.values())
+    updated_distribution = chord_ring.get_load_distribution()
 
-# Plot updated distribution
-plot_distribution(updated_distribution.values(), number_of_nodes, 'Updated Distribution')
+    # Print updated distribution statistics
+    print_distribution_statistics('Updated Distribution', updated_distribution.values())
+
+    # Plot updated distribution
+    plot_distribution(updated_distribution.values(), current_number_of_nodes, 'Updated Distribution')
 
 # Lookup data
 key_to_lookup = 'extent500'
