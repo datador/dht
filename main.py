@@ -1,6 +1,63 @@
   # imports
 from src.chord import ChordRing
 import random
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+import statistics as st
+
+def plot_distribution(values: list, number_of_nodes: int , title: str):
+    """
+    Plot the distribution of data extents across nodes.
+
+    :param values: The values to plot.
+    :param number_of_nodes: The number of nodes.
+    :param title: The title of the plot.
+    """
+    plt.bar(range(1, number_of_nodes + 1), values, color='grey')
+    plt.title(title)
+    plt.xlabel('Node Number')
+    plt.ylabel('Number of Extents')
+    plt.show()
+
+def print_distribution_statistics(title: str, values: list):
+    """
+    Print statistics about the distribution of data extents across nodes.
+
+    :param title: The title of the distribution.
+    :param values: The values to analyze.
+    """
+    print("Number of nodes:", len(values))
+    print(title + ":", list(values))
+    print("Sum of " + title + ":", sum(values))
+    print("Median of " + title + ":", st.median(values))
+    print("Mean of " + title + ":", st.mean(values))
+    print("Standard deviation of " + title + ":", st.stdev(values))
+    print("Min and max of " + title + ":", min(values), max(values))
+    print("Chi-squared test of " + title + ":", chi_squared_test(values))
+  
+def ideal_distribution(values: list):
+    """
+    Calculate the ideal distribution of values.
+
+    :param values: The values to analyze.
+    :return: The ideal distribution of values.
+    """
+
+    ideal_value = sum(values) / len(values)
+    return [ideal_value] * len(values)
+
+def chi_squared_test(values: list):
+    """
+    Perform a chi-squared test of the observed and expected distributions.
+
+    :param observed: The observed distribution.
+    :param expected: The expected distribution.
+    :return: The chi-squared test p-value.
+    """
+    observed = list(values)
+    expected = ideal_distribution(values)
+    
+    return stats.chisquare(observed, expected).pvalue
 
 # Parameters
 m = 10  # size of the key space
@@ -15,20 +72,31 @@ for i in range(initial_nodes):
     chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
 
 initial_distribution = chord_ring.get_load_distribution()
-print("Initial distribution:", initial_distribution)
-print("Sum of initial distribution:", sum(initial_distribution.values()))
+
+# Print initial distribution statistics
+print_distribution_statistics('Initial Distribution', initial_distribution.values())
+
+# Plot initial distribution
+plot_distribution(initial_distribution.values(), initial_nodes, 'Initial Distribution')
 
 # Perform 1,000,000 random write operations
 write_distribution = chord_ring.simulate_workload(workload)
 print("Write Distribution:", write_distribution)
+print("Sum of write distribution", sum(write_distribution.values()))
 
 # Add more nodes and check distribution
 additional_nodes = 5
-for i in range(initial_nodes, initial_nodes + additional_nodes):
+number_of_nodes = initial_nodes + additional_nodes
+for i in range(initial_nodes, number_of_nodes):
     chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
 
 updated_distribution = chord_ring.get_load_distribution()
-print("Updated distribution after adding more nodes:", updated_distribution)
+
+# Print updated distribution statistics
+print_distribution_statistics('Updated Distribution', updated_distribution.values())
+
+# Plot updated distribution
+plot_distribution(updated_distribution.values(), number_of_nodes, 'Updated Distribution')
 
 # Lookup data
 key_to_lookup = 'extent500'
