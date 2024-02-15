@@ -96,7 +96,11 @@ for _ in range(int((max_number_of_nodes - initial_nodes) / nodes_per_increment))
     for _ in range(nodes_per_increment):
         chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
 
+    # Get updated distribution
     updated_distribution = chord_ring.get_load_distribution()
+    # Simulate workload
+    write_distribution = chord_ring.simulate_workload(workload)
+    print_distribution_statistics('Write Distribution', write_distribution.values())
 
     # Print updated distribution statistics
     print_distribution_statistics('Updated Distribution', updated_distribution.values())
