@@ -38,5 +38,5 @@ print(f"Data for {key_to_lookup}: {data}")
 counter = 0
 for i in range(len(chord_ring.nodes)):
     counter += len(chord_ring.nodes[i].data)
-    print(f"Node{i} ({chord_ring.nodes[i].node_id}):",len(chord_ring.nodes[i].data))
+    #print(f"Node{i} ({chord_ring.nodes[i].node_id}):",len(chord_ring.nodes[i].data))
 print("total sum:", counter)
