@@ -1,161 +1,155 @@
 import hashlib
-import bisect
 import random
-import time 
+from typing import Dict, Optional
 
 class Node:
-    def __init__(self, node_id, m):
+    """ Represents a node in the Chord ring. """
+
+    def __init__(self, node_id: int):
+        """
+        Initialize a Node with a given identifier.
+
+        :param node_id: Unique identifier of the node.
+        """
         self.node_id = node_id
-        self.data = {}
-        self.finger_table = []
-        self.predecessor = None
-        self.m = m
-        self.counter = 0
+        self.data = {}  # Stores data extents assigned to this node
 
-    def store_data(self, key, value):
+    def store_data(self, key: str, value: str):
+        """
+        Store a key-value pair in the node's data.
+
+        :param key: The key of the data extent.
+        :param value: The value of the data extent.
+        """
         self.data[key] = value
-        self.counter += 1
 
-    def find_successor(self, key_hash):
-        if self.node_id < key_hash <= self.finger_table[0].node_id or self.node_id == self.finger_table[0].node_id:
-            return self.finger_table[0]
-        else:
-            # Find the closest preceding node
-            for node in reversed(self.finger_table):
-                if node.node_id < key_hash:
-                    return node.find_successor(key_hash)
-            return self
-    def get_counter(self):
-        return self.counter
 
 class ChordRing:
-    def __init__(self, m, num_extents, initial_nodes, n):
+    """ Represents a Chord Distributed Hash Table (DHT) ring. """
+
+    def __init__(self, m: int, num_extents: int, replication_factor: int):
+        """
+        Initialize the Chord ring with specific parameters.
+
+        :param m: The size of the address space (2^m).
+        :param num_extents: The number of data extents in the system.
+        :param replication_factor: The number of replicas for each data extent.
+        """
+        self.nodes = []  # List of nodes in the Chord ring
         self.m = m
         self.max_nodes = 2 ** m
-        self.nodes = []
-        self.extents = {i: None for i in range(num_extents)}
-        self.replicas = n
         self.num_extents = num_extents
+        self.replication_factor = replication_factor
 
-        # Automatically add initial nodes
-        for _ in range(initial_nodes):
-            self.add_random_node()
+    def hash_key(self, key: str) -> int:
+        """
+        Hash a key to an integer using SHA-1 and modulo operation.
 
-    def add_random_node(self):
-        unique_attribute = self.generate_unique_attribute()
-        hashed_value = int(hashlib.sha1(unique_attribute.encode()).hexdigest(), 16)
-        node_id = hashed_value % self.max_nodes
-        self.add_node(node_id)
-
-    def generate_unique_attribute(self):
-        # Generate a unique attribute, e.g., a combination of timestamp and random string
-        return str(time.time()) + str(random.random())
-
-    def hash_key(self, key):
+        :param key: The key to hash.
+        :return: An integer hash value.
+        """
         return int(hashlib.sha1(key.encode()).hexdigest(), 16) % self.max_nodes
 
-    def add_node(self, node_id):
-        new_node = Node(node_id, self.m)
+    def add_node(self, node_id: int):
+        """
+        Add a new node to the Chord ring.
+
+        :param node_id: The identifier of the new node.
+        """
+        new_node = Node(node_id)
         self.nodes.append(new_node)
-        self.nodes.sort(key=lambda node: node.node_id)
-        self.update_finger_tables()
-        self.redistribute_data(new_node)
+        self.nodes.sort(key=lambda x: x.node_id)
+        self.redistribute_data()
 
-    def remove_node(self, node_id):
-        node_to_remove = next((node for node in self.nodes if node.node_id == node_id), None)
-        if node_to_remove:
-            self.nodes.remove(node_to_remove)
-            self.update_finger_tables()
-            self.redistribute_data_on_removal(node_to_remove)
-
-    def update_finger_tables(self):
+    def redistribute_data(self):
+        """ Redistribute data among the nodes after any change in the node list. """
         for node in self.nodes:
-            node.finger_table = []
-            for k in range(self.m):
-                successor_id = (node.node_id + 2 ** k) % self.max_nodes
-                successor = self.find_successor(successor_id)
-                node.finger_table.append(successor)
+            node.data.clear()
 
-    def find_successor(self, key):
-        # Convert key to an integer hash if it's not already
-        if isinstance(key, str):
-            key_hash = self.hash_key(key)
-        else:
-            key_hash = key
+        for extent_id in range(self.num_extents):
+            key = f'extent{extent_id}'
+            primary_node = self.find_node(key)
+            primary_node.store_data(key, f'data{extent_id}')
 
-        # Handle case where no nodes are in the ring
-        if not self.nodes:
-            return None
+            # Replicate data to the next nodes based on replication factor
+            for i in range(self.replication_factor):
+                next_node = self.get_next_node(primary_node)
+                next_node.store_data(key, f'data{extent_id}')
+                primary_node = next_node
 
-        # Handle wrap-around case
-        if key_hash > self.nodes[-1].node_id:
-            return self.nodes[0]
+    def find_node(self, key: str) -> Node:
+        """
+        Find the node responsible for a given key.
 
-        # Binary search to find the successor node
-        left, right = 0, len(self.nodes) - 1
-        while left <= right:
-            mid = (left + right) // 2
-            mid_node_id = self.nodes[mid].node_id
-
-            if mid_node_id < key_hash:
-                left = mid + 1
-            elif mid_node_id > key_hash:
-                right = mid - 1
-            else:
-                return self.nodes[mid]
-
-        return self.nodes[left]
-
-    def redistribute_data(self, new_node):
-        # Assign data to the new node based on its responsibility
+        :param key: The key to locate in the ring.
+        :return: Node object that is responsible for the key.
+        """
+        key_hash = self.hash_key(key)
         for node in self.nodes:
-            if node == new_node:
-                continue
-            keys_to_move = [key for key in node.data.keys() if self.find_successor(self.hash_key(key)) == new_node]
-            for key in keys_to_move:
-                new_node.store_data(key, node.data[key])
-                del node.data[key]
+            if node.node_id >= key_hash:
+                return node
+        return self.nodes[0]
 
-    def redistribute_data_on_removal(self, removed_node):
-        # Reassign data from the removed node to its successor
-        successor = self.find_successor(removed_node.node_id + 1)
-        for key, value in removed_node.data.items():
-            successor.store_data(key, value)
-  
-    def store_data(self, key, value):
-        key_hash = self.hash_key(key)
-        initial_node = self.find_successor(key_hash)
-        initial_node.store_data(key, value)
+    def get_next_node(self, current_node: Node) -> Node:
+        """
+        Find the next node in the ring.
 
-        # Replicate the data on the next 'self.replicas' successor nodes (n=1 means replication factor of 1, so stored on 2 nodes total)
-        current_node = initial_node
-        for _ in range(self.replicas):
-            # Find the immediate successor of the current node from the fingertables (always index 0 for next in line)
-            next_node_id = current_node.finger_table[0].node_id
-            next_node = self.find_successor(next_node_id)
-            next_node.store_data(key, value)
+        :param current_node: The current node.
+        :return: The next node in the ring.
+        """
+        current_index = self.nodes.index(current_node)
+        next_index = (current_index + 1) % len(self.nodes)
+        return self.nodes[next_index]
 
-            # update next node for next round of iter
-            current_node = next_node
+    def lookup_data(self, key: str) -> Optional[str]:
+        """
+        Lookup data for a given key.
 
-    def lookup_data(self, key):
-        key_hash = self.hash_key(key)
-        node = self.find_successor(key_hash)
-        data = node.data.get(key, None)
-        return (node.node_id, key, data)  # Return the node ID instead of the node object
+        :param key: The key to look up.
+        :return: The data associated with the key, or None if not found.
+        """
+        node = self.find_node(key)
+        return node.data.get(key)
 
+    def simulate_workload(self, num_operations: int) -> Dict[int, int]:
+        """
+        Simulate a workload of random write operations.
 
-    def simulate_workload(self, num_operations):
-        for i in range(1, num_operations+1):  
-            extent_name = f"extent{i % self.num_extents}"
-            data = f"data{i}"
-            self.store_data(extent_name, data)
+        :param num_operations: Number of write operations to simulate.
+        :return: A dictionary mapping node IDs to the number of operations handled.
+        """
+        operation_count = {node.node_id: 0 for node in self.nodes}
+        for _ in range(num_operations):
+            random_extent = f'extent{random.randint(0, self.num_extents - 1)}'
+            random_data = f'data{random.randint(0, 1000000)}'
+            self.store_data(random_extent, random_data)
 
-    def simulate_random_workload(self, num_operations):
-        for i in range(1, num_operations+1):  
-            extent_name = f"extent{random.randint(0, self.num_extents)}"
-            data = f"data{i}"
-            self.store_data(extent_name, data)
+            primary_node = self.find_node(random_extent)
+            operation_count[primary_node.node_id] += 1
 
-    def analyze_workload_distribution(self):
-        return {i+1: node.get_counter() for i,node in enumerate(self.nodes)}
+            for _ in range(self.replication_factor):
+                primary_node = self.get_next_node(primary_node)
+                operation_count[primary_node.node_id] += 1
+
+        return operation_count
+
+    def store_data(self, key: str, value: str):
+        """
+        Store data in the appropriate node and its replicas.
+
+        :param key: The key of the data extent.
+        :param value: The value of the data extent.
+        """
+        node = self.find_node(key)
+        node.store_data(key, value)
+        for _ in range(self.replication_factor):
+            node = self.get_next_node(node)
+            node.store_data(key, value)
+
+    def get_load_distribution(self) -> Dict[int, int]:
+        """
+        Get the distribution of data across nodes.
+
+        :return: A dictionary mapping node IDs to the number of data extents they hold.
+        """
+        return {node.node_id: len(node.data) for node in self.nodes}

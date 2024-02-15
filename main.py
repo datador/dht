@@ -1,32 +1,36 @@
   # imports
 from src.chord import ChordRing
+import random
 
 # Parameters
-nodes = 10
+m = 10  # size of the key space
 num_extents = 10000
-workload_size = 1000000
-num_servers_max = 20
-servers_increment = 5
-m=10
-n=3
+workload = 1000000
+replication_factor = 3
+chord_ring = ChordRing(m, num_extents, replication_factor)
 
+# Add initial nodes and simulate workload
+initial_nodes = 10
+for i in range(initial_nodes):
+    chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
 
-# Initialize Chord Ring with 10 servers and 10,000 extents
+initial_distribution = chord_ring.get_load_distribution()
+print("Initial distribution:", initial_distribution)
+print("Sum of initial distribution:", sum(initial_distribution.values()))
 
-chord_ring = ChordRing(m=m, num_extents=num_extents, initial_nodes=nodes,n=n)
-chord_ring.simulate_random_workload(workload_size)
-distribution_after_scaling = chord_ring.analyze_workload_distribution()
-print(f"Workload Distribution after scaling to {nodes} nodes:", distribution_after_scaling)
+# Perform 1,000,000 random write operations
+write_distribution = chord_ring.simulate_workload(workload)
+print("Write Distribution:", write_distribution)
 
-# Scale out experiment
-for total_nodes in range(15, num_servers_max+1, servers_increment):  # Incrementing by 5 each time up to 30 nodes
-    for _ in range(servers_increment):  # Add 5 new nodes
-        chord_ring.add_random_node()
-    chord_ring.simulate_random_workload(workload_size)
-    distribution_after_scaling = chord_ring.analyze_workload_distribution()
-    print(f"Workload Distribution after scaling to {total_nodes} nodes:", distribution_after_scaling)
+# Add more nodes and check distribution
+additional_nodes = 5
+for i in range(initial_nodes, initial_nodes + additional_nodes):
+    chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
 
-# Lookup for a specific extent
-extent_id_to_lookup = 'extent124' 
-lookup_info = chord_ring.lookup_data(str(extent_id_to_lookup))
-print(f"Data for extent {extent_id_to_lookup}: {lookup_info}")
+updated_distribution = chord_ring.get_load_distribution()
+print("Updated distribution after adding more nodes:", updated_distribution)
+
+# Lookup data
+key_to_lookup = 'extent500'
+data = chord_ring.lookup_data(key_to_lookup)
+print(f"Data for {key_to_lookup}: {data}")
