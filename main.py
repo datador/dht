@@ -6,7 +6,7 @@ from src.test_functions import print_distribution_statistics, plot_distribution,
 # Parameters
 m = 32  # size of the key space
 num_extents = 10000
-workload = 1000
+workload = 1000000
 replication_factor = 3
 chord_ring = ChordRing(m, num_extents, replication_factor)
 

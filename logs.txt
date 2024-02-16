@@ -1,0 +1,53 @@
+Number of nodes: 10
+Initial Distribution: [7115, 7116, 6806, 4132, 1938, 2724, 1778, 1543, 2363, 4485]
+Sum of Initial Distribution: 40000
+Median of Initial Distribution: 3428.0
+Mean of Initial Distribution: 4000
+Standard deviation of Initial Distribution: 2286.99
+Min and max of Initial Distribution: 1543 7116
+Chi-squared test of Initial Distribution: p-value =  0.2133
+Kolmogorov-Smirnov test of Initial Distribution: p-value =  0.314
+Write Distribution: {912943959: 712, 969432508: 710, 1388937680: 688, 1532440121: 439, 1730959071: 199, 2115857576: 275, 2138568928: 181, 2186322771: 147, 2766972489: 220, 4067234617: 429}
+Sum of write distribution 4000
+Write Distribution: {293672553: 542, 512128061: 460, 912943959: 493, 969432508: 271, 1086456804: 163, 1316671973: 183, 1388937680: 106, 1532440121: 138, 1730959071: 157, 2115857576: 220, 2138568928: 211, 2186322771: 183, 2766972489: 259, 3021960145: 194, 4067234617: 420}
+Number of nodes: 15
+Updated Distribution: [5527, 4706, 5134, 2791, 1845, 1943, 1107, 1341, 1561, 1895, 1778, 1543, 2363, 2021, 4445]
+Sum of Updated Distribution: 40000
+Median of Updated Distribution: 1943
+Mean of Updated Distribution: 2666.67
+Standard deviation of Updated Distribution: 1497.0
+Min and max of Updated Distribution: 1107 5527
+Chi-squared test of Updated Distribution: p-value =  0.3134
+Kolmogorov-Smirnov test of Updated Distribution: p-value =  0.0133
+Write Distribution: {51609173: 351, 226201541: 352, 293672553: 140, 512128061: 137, 912943959: 220, 969432508: 183, 1086456804: 188, 1316671973: 188, 1388937680: 104, 1532440121: 140, 1730959071: 159, 1832789384: 141, 2115857576: 195, 2138568928: 148, 2186322771: 115, 2438852171: 138, 2766972489: 130, 3021960145: 177, 4067234617: 398, 4268140006: 396}
+Number of nodes: 20
+Updated Distribution: [3700, 3518, 1202, 1197, 1999, 1737, 1845, 1943, 1107, 1341, 1561, 1242, 1738, 1423, 1067, 1359, 1456, 1981, 4325, 4259]
+Sum of Updated Distribution: 40000
+Median of Updated Distribution: 1649.0
+Mean of Updated Distribution: 2000
+Standard deviation of Updated Distribution: 1052.8
+Min and max of Updated Distribution: 1067 4325
+Chi-squared test of Updated Distribution: p-value =  0.0184
+Kolmogorov-Smirnov test of Updated Distribution: p-value =  0.0
+Write Distribution: {51609173: 104, 226201541: 106, 293672553: 58, 512128061: 108, 912943959: 194, 914674633: 166, 969432508: 162, 1086456804: 135, 1316671973: 96, 1388937680: 111, 1532440121: 139, 1730959071: 161, 1832789384: 134, 1930194980: 143, 2115857576: 140, 2138568928: 92, 2186322771: 71, 2438852171: 102, 2766972489: 144, 3021960145: 196, 3505722194: 306, 3934379276: 346, 4067234617: 295, 4268140006: 302, 4284933442: 189}
+Number of nodes: 25
+Updated Distribution: [977, 1054, 722, 1151, 1999, 1620, 1589, 1370, 950, 1103, 1341, 1561, 1242, 1325, 1383, 947, 813, 1119, 1456, 1981, 2990, 3473, 3029, 2944, 1861]
+Sum of Updated Distribution: 40000
+Median of Updated Distribution: 1370
+Mean of Updated Distribution: 1600
+Standard deviation of Updated Distribution: 754.43
+Min and max of Updated Distribution: 722 3473
+Chi-squared test of Updated Distribution: p-value =  0.0347
+Kolmogorov-Smirnov test of Updated Distribution: p-value =  0.0005
+Write Distribution: {51609173: 99, 226201541: 98, 293672553: 61, 512128061: 101, 867845219: 178, 912943959: 150, 914674633: 137, 969432508: 106, 1086456804: 40, 1316671973: 85, 1388937680: 94, 1440396745: 94, 1532440121: 93, 1730959071: 88, 1832789384: 103, 1930194980: 117, 2115857576: 138, 2138568928: 97, 2186322771: 84, 2438852171: 123, 2766972489: 166, 3021960145: 228, 3362369614: 300, 3418853429: 250, 3505722194: 189, 3512432623: 125, 3934379276: 135, 4067234617: 158, 4268140006: 183, 4284933442: 180}      
+Number of nodes: 30
+Updated Distribution: [977, 1054, 722, 1151, 1869, 1616, 1472, 1114, 507, 950, 1103, 1115, 1085, 988, 1085, 1196, 1383, 947, 813, 1119, 1456, 1981, 2664, 2243, 1694, 1144, 1355, 1536, 1815, 1846]
+Sum of Updated Distribution: 40000
+Median of Updated Distribution: 1147.5
+Mean of Updated Distribution: 1333.33
+Standard deviation of Updated Distribution: 471.3
+Min and max of Updated Distribution: 507 2664
+Chi-squared test of Updated Distribution: p-value =  0.0314
+Kolmogorov-Smirnov test of Updated Distribution: p-value =  0.0212
+Data for extent500: data500
+Time taken for retrieval: 0.000033 seconds
