@@ -1,7 +1,7 @@
   # imports
 from src.chord import ChordRing
 import random
-from src.test_functions import print_distribution_statistics, plot_distribution
+from src.test_functions import print_distribution_statistics, plot_distribution, lookup_and_measure_time
 
 # Parameters
 m = 32  # size of the key space
@@ -36,7 +36,7 @@ current_number_of_nodes = initial_nodes
 for _ in range(int((max_number_of_nodes - initial_nodes) / nodes_per_increment)):
     current_number_of_nodes = current_number_of_nodes + nodes_per_increment
     for _ in range(nodes_per_increment):
-        chord_ring.add_node(random.randint(0, chord_ring.max_nodes))
+        chord_ring.add_node(random.randint(0, chord_ring.max_nodes - 1))
 
     # Get updated distribution
     updated_distribution = chord_ring.get_load_distribution()
@@ -52,5 +52,4 @@ for _ in range(int((max_number_of_nodes - initial_nodes) / nodes_per_increment))
 
 # Lookup data
 key_to_lookup = 'extent500'
-data = chord_ring.lookup_data(key_to_lookup)
-print(f"Data for {key_to_lookup}: {data}")
+lookup_and_measure_time(key_to_lookup, chord_ring)

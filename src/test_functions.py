@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 import statistics as st
 import numpy as np
+import time
 
 def plot_distribution(values: list, number_of_nodes: int , title: str):
     """
@@ -73,3 +74,19 @@ def test_uniformity(values: list, min_value: float, max_value: float):
     _, p_value = stats.kstest(list(values), expected_cdf)
 
     return round(p_value,4)
+
+def lookup_and_measure_time(key_to_lookup, chord_ring):
+    # Record the start time
+    start_time = time.perf_counter()
+
+    # Lookup data
+    data = chord_ring.lookup_data(key_to_lookup)
+
+    # Record the end time
+    end_time = time.perf_counter()
+
+    # Calculate the time taken
+    time_taken = end_time - start_time
+
+    print(f"Data for {key_to_lookup}: {data}")
+    print(f"Time taken for retrieval: {time_taken:.6f} seconds")
